@@ -1,46 +1,44 @@
 <div id="display_box">
 
   <% if params.has_key?("context_name") || params.has_key?("tag_add_list") || params.has_key?("tag_replace_list") || params.has_key?("project_name") || params.has_key?("todo") %>
-  <div class="container">
-    <% if params.has_key?("execute") %>
-    <h2>The following changes were made</h2>
-    <%= update_mult_todos(params) %>
-    
-    <% else %>
-    <h2>Proposed changes</h2>
-    <% end %>
-    <ul>
-      <%= param_disp("Change context to",params[:context_name]) %>
-      <%= param_disp("Change project to",params[:project_name]) %>
-      <%= param_disp("Tags to add",params[:tag_add_list]) %>
-      <%= param_disp("Replace tags with",params[:tag_replace_list]) %>
-      <%= param_disp("Replace Due date with",params[:todo][:due]) %>
-      <%= param_disp("Replace \"Show From\" with",params[:todo][:show_from]) %>
-    </ul>
-    <% if not params.has_key?("execute") %>
-    <% if (params[:tag_add_list].length > 0) && (params[:tag_replace_list].length > 0) %>
-    <h3> ERROR - Cannot replace and add tags!  Re-input values.</h3>
-    <% else %>
-    <div class="submit_modify_mult">
-      <% @new_params = params %>
-      <% @new_params[:execute] = true %>
-      <%= button_to "Modify tasks listed below", modify_path(@new_params),
-          :confirm => "The world may implode - are you sure you want to do this?" %>
+    <div class="container">
+      <% if params.has_key?("execute") %>
+        <h2>The following changes were made</h2>
+        <%= update_mult_todos(params) %>
+      <% else %>
+        <h2>Proposed changes</h2>
+      <% end %>
+      <ul>
+	<%= param_disp("Change context to",params[:context_name]) %>
+	<%= param_disp("Change project to",params[:project_name]) %>
+	<%= param_disp("Tags to add",params[:tag_add_list]) %>
+	<%= param_disp("Replace tags with",params[:tag_replace_list]) %>
+	<%= param_disp("Replace Due date with",params[:todo][:due]) %>
+	<%= param_disp("Replace \"Show From\" with",params[:todo][:show_from]) %>
+      </ul>
+      <% if not params.has_key?("execute") %>
+        <% if (params[:tag_add_list].length > 0) && (params[:tag_replace_list].length > 0) %>
+          <h3> ERROR - Cannot replace and add tags!  Re-input values.</h3>
+	<% else %>
+          <div class="submit_modify_mult">
+            <% @new_params = params %>
+            <% @new_params[:execute] = true %>
+            <%= button_to "Modify tasks listed below", modify_path(@new_params),
+		:confirm => "The world may implode - are you sure you want to do this?" %>
+          </div>
+        <% end %>
+      <% end %>
     </div>
-    <% end %>
-    <% end %>
-  </div>
   <% end %>
 
 
-    <div class="uncheck_all_todos">
-      <% @new_params = params %>
-      <% @new_params[:execute] = true %>
-      <%= button_to "Uncheck all todos", uncheck_all_todos(),
-          :confirm => "Operation cannot be undone - you need to track down all tasks again!" %>
-    </div>
+  <div class="container">
+    <%= button_to "Uncheck all todos", uncheck_all_path,
+        :confirm => "Operation cannot be undone - you need to track down all tasks again!" %>
+  </div>
 
 
+  
   <div class="container">
     <h2>Incomplete Actions that are Checked for Modification</h2>
     <div id="empty_due_today" <%= "style=\"display:none\"" unless @flagged_not_completed.empty? %>>

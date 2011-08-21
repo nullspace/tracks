@@ -851,6 +851,16 @@ class TodosController < ApplicationController
     end
   end
 
+  def uncheck_all
+    @todos = current_user.todos.find(:all,
+                                     :include => Todo::DEFAULT_INCLUDES,
+                                     :conditions => { :box_checked => "checked" })
+    @todos.each do |todo|
+      todo.toggle_box!
+    end
+    return modify_path
+  end
+
   def list_hidden
     @hidden = current_user.todos.hidden
     respond_to do |format|

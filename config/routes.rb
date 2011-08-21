@@ -55,6 +55,7 @@ ActionController::Routing::Routes.draw do |map|
     todos.calendar 'calendar', :action => "calendar"
 
     todos.modify 'modify', :action => "modify"  # Sage
+    todos.uncheck_all 'modify/uncheck_all', :action => "uncheck_all"  # Sage
 
     todos.hidden 'hidden.xml', :action => "list_hidden", :format => 'xml'
 
