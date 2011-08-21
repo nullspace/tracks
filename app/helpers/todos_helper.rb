@@ -515,4 +515,14 @@ module TodosHelper
     return "<p>Successfully ran through change loops!</p>"
   end
   
+  def uncheck_all_todos()
+    @todos = current_user.todos.find(:all,
+                                     :include => Todo::DEFAULT_INCLUDES,
+                                     :conditions => { :box_checked => "checked" })
+    @todos.each do |todo|
+      todo.toggle_box!
+    end
+    return modify_path
+  end
+  
 end

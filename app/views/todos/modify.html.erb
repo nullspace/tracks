@@ -11,7 +11,7 @@
     <% end %>
     <ul>
       <%= param_disp("Change context to",params[:context_name]) %>
-      <%= param_disp("Change project to",params["project_name"]) %>
+      <%= param_disp("Change project to",params[:project_name]) %>
       <%= param_disp("Tags to add",params[:tag_add_list]) %>
       <%= param_disp("Replace tags with",params[:tag_replace_list]) %>
       <%= param_disp("Replace Due date with",params[:todo][:due]) %>
@@ -33,10 +33,18 @@
   <% end %>
 
 
+    <div class="uncheck_all_todos">
+      <% @new_params = params %>
+      <% @new_params[:execute] = true %>
+      <%= button_to "Uncheck all todos", uncheck_all_todos(),
+          :confirm => "Operation cannot be undone - you need to track down all tasks again!" %>
+    </div>
+
+
   <div class="container">
-    <h2>Title (hard coded)</h2>
+    <h2>Incomplete Actions that are Checked for Modification</h2>
     <div id="empty_due_today" <%= "style=\"display:none\"" unless @flagged_not_completed.empty? %>>
-      <%= t('todos.calendar.no_actions_due_today') %>
+      <%= t('todos.no_actions_checked') %>
     </div>
     <div id="flagged_not_completed">
       <%= render :partial => "todos/todo", :collection => @flagged_not_completed %>
@@ -44,9 +52,9 @@
   </div>
 
   <div class="container">
-    <h2>Title2 (hard coded)</h2>
+    <h2>Completed Actions that are Checked for Modification</h2>
     <div id="empty_due_today" <%= "style=\"display:none\"" unless @flagged_not_completed.empty? %>>
-      <%= t('todos.calendar.no_actions_due_today') %>
+      <%= t('todos.no_actions_checked') %>
     </div>
     <div id="flagged_completed">
       <%= render :partial => "todos/todo", :collection => @flagged_completed %>

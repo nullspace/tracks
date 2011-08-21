@@ -456,6 +456,7 @@ en:
     new_related_todo_not_created_short: did not create todo
     completed_rest_of_week: Completed in the rest of this week
     error_starring: Could not toggle the star of this todo '%{description}'
+    no_actions_checked: "No actions checked for modify multiple"
     calendar:
       get_in_ical_format: Get this calendar in iCal format
       due_next_week: Due next week
