@@ -24,8 +24,10 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :notes
 
+  #map.resources :hacks
+
   map.resources :todos,
-    :member => {:toggle_check => :put, :toggle_star => :put, :defer => :put},
+    :member => {:toggle_check => :put, :check_box => :put, :toggle_flag => :any, :toggle_star => :put, :defer => :put},
     :collection => {:check_deferred => :post, :filter_to_context => :post, :filter_to_project => :post, :done => :get, :all_done => :get
   }
 
@@ -52,6 +54,8 @@ ActionController::Routing::Routes.draw do |map|
     todos.calendar 'calendar.xml', :action => "calendar", :format => 'xml'
     todos.calendar 'calendar', :action => "calendar"
 
+    todos.modify 'modify', :action => "modify"  # Sage
+
     todos.hidden 'hidden.xml', :action => "list_hidden", :format => 'xml'
 
     todos.mobile 'mobile', :action => "index", :format => 'm'
@@ -66,7 +70,7 @@ ActionController::Routing::Routes.draw do |map|
   map.root :controller => 'todos' # Make OpenID happy because it needs #root_url defined
 
   map.resources :recurring_todos, :collection => {:done => :get},
-    :member => {:toggle_check => :put, :toggle_star => :put}
+    :member => {:toggle_check => :put, :check_box => :put, :toggle_flag => :put, :toggle_star => :put}
   map.with_options :controller => :recurring_todos do |rt|
     rt.recurring_todos 'recurring_todos', :action => 'index'
   end

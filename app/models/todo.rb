@@ -255,6 +255,20 @@ class Todo < ActiveRecord::Base
     starred
   end
 
+  def toggle_box!
+    if self.box_checked?
+      self.box_checked= nil
+    else
+      self.box_checked= 'checked'
+    end
+    self.save
+    self.box_checked?
+  end
+
+  def toggle_flag!
+    toggle_box!
+  end
+
   def from_recurring_todo?
     return self.recurring_todo_id != nil
   end

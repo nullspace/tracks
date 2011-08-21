@@ -6,6 +6,13 @@ module TodosHelper
       :class => "icon star_item", :title => t('todos.star_action_with_description', :description => todo.description))
   end
 
+  def update_multiple_items_star(todo=@todo)
+    link_to( image_tag_for_star2(todo),
+             toggle_flag_todo_path(todo),
+             :class => "icon star2_item", 
+             :title => "toggle flag/star")
+  end
+
   def remote_edit_button(todo=@todo)
     link_to(
       image_tag("blank.png", :alt => t('todos.edit'), :align => "absmiddle", :id => 'edit_icon_todo_'+todo.id.to_s, :class => 'edit_item'),
@@ -87,6 +94,13 @@ module TodosHelper
   def remote_toggle_checkbox(todo=@todo)
     check_box_tag("mark_complete_#{todo.id}", toggle_check_todo_path(todo), todo.completed?, :class => 'item-checkbox',
       :title => todo.pending? ? t('todos.blocked_by', :predecessors => todo.uncompleted_predecessors.map(&:description).join(', ')) : "", :readonly => todo.pending?)
+  end
+  
+  def update_multiple_items_checkbox(todo=@todo)
+    check_box_tag("check_the_box_#{todo.id}", 
+                  check_box_todo_path(todo), 
+                  todo.box_checked?, 
+                  :class => 'item-checkbox')
   end
 
   def date_span(todo=@todo)
@@ -447,4 +461,58 @@ module TodosHelper
     image_tag("blank.png", :title =>t('todos.star_action'), :class => "todo_star"+(todo.starred? ? " starred":""), :id => "star_img_"+todo.id.to_s)
   end
 
+  # New functions added by R.Sage
+
+  def image_tag_for_star2(todo)
+    class_str = todo.box_checked? ? "starred_todo" : "unstarred_todo"
+    image_tag("blank.png", :title =>t('todos.star_action'), :class => class_str, :id => "star2_img_"+todo.id.to_s)
+  end
+
+  def param_disp(param_disp_str,param_val)
+    #return "<li> testing </li>"
+    if param_val.length > 0
+      return "<li> #{param_disp_str}: #{param_val} </li>"
+    else
+      return ""
+    end
+  end
+
+  def update_mult_todos(param_list = {})
+    @todos = current_user.todos.find(:all,
+                                     :include => Todo::DEFAULT_INCLUDES,
+                                     :conditions => { :box_checked => "checked" })
+    @todos.each do |todo|
+      if param_list[:context_name].length > 0
+        context = current_user.contexts.find_or_create_by_name(param_list[:context_name])
+        todo.context_id = context.id
+      end
+      if param_list[:project_name].length > 0
+        project = current_user.projects.find_or_create_by_name(param_list[:project_name])
+        todo.project_id = project.id
+      end
+      if param_list[:tag_add_list].length > 0
+        @tag_list = "#{todo.tag_list},#{param_list[:tag_add_list]}"
+        todo.tag_with(@tag_list)
+        todo.tags.reload
+      elsif param_list[:tag_replace_list].length > 0
+        if todo.starred?
+          @tag_list = "starred,#{param_list[:tag_replace_list]}"
+          todo.tag_with(@tag_list)
+        else
+          todo.tag_with(param_list[:tag_replace_list])
+        end
+        todo.tags.reload
+      end
+      if param_list[:todo][:due].length > 0
+        todo.due = prefs.parse_date(param_list[:todo][:due])
+      end
+      if param_list[:todo][:show_from].length > 0
+        todo.show_from = prefs.parse_date(
+                             param_list[:todo][:show_from])
+      end
+      todo.save
+    end
+    return "<p>Successfully ran through change loops!</p>"
+  end
+  
 end

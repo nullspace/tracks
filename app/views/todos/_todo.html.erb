@@ -33,6 +33,8 @@ parameters += "&_tag_name=#{@tag_name}" if @source_view == 'tag'
       <%= project_and_context_links( todo, parent_container_type, :suppress_context => suppress_context, :suppress_project => suppress_project ) %>
       <%= collapsed_notes_image(todo) unless todo.notes.blank? %>
       <%= collapsed_successors_image(todo) if todo.has_pending_successors %>
+    <%= update_multiple_items_checkbox(todo) %>
+    <%= update_multiple_items_star(todo) %>
     </div>
   </div>
   <div id="<%= dom_id(todo, 'edit') %>" class="edit-form" style="display:none">

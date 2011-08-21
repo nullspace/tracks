@@ -8,7 +8,7 @@ class TodosController < ApplicationController
 
   # TODO: replace :except with :only
   append_before_filter :init, :except => [ :tag, :tags, :destroy, :done,
-    :check_deferred, :toggle_check, :toggle_star, :edit, :update, :defer, :create,
+    :check_deferred, :toggle_check, :check_box, :toggle_star, :toggle_flag, :edit, :update, :defer, :create,
     :calendar, :auto_complete_for_predecessor, :remove_predecessor, :add_predecessor]
 
   protect_from_forgery :except => :check_deferred
@@ -355,6 +355,55 @@ class TodosController < ApplicationController
           redirect_to old_path
         else
           notify(:notice, t("todos.action_marked_complete", :description => @todo.description, :completed => @todo.completed? ? 'complete' : 'incomplete'))
+          redirect_to todos_path(:format => 'm')
+        end
+      }
+    end
+  end
+
+  # Checks the second box to allow multiple mods
+  #
+  def check_box
+    @todo = current_user.todos.find(params['id'])
+    # @source_view = params['_source_view'] || 'todo'
+
+    @todo.toggle_box!
+
+    @saved = true # cannot determine error
+    respond_to do |format|
+      format.js
+      format.xml { render :xml => @todo.to_xml( *to_xml_params ) }
+      format.html { redirect_to request.referrer}
+      format.m {
+        if cookies[:mobile_url]
+          old_path = cookies[:mobile_url]
+          cookies[:mobile_url] = {:value => nil, :secure => SITE_CONFIG['secure_cookies']}
+          notify(:notice, "Box toggled")
+          redirect_to old_path
+        else
+          notify(:notice, "Box toggled")
+          redirect_to todos_path(:format => 'm')
+        end
+      }
+    end
+  end
+
+  def toggle_flag
+    @todo = current_user.todos.find(params['id'])
+    @todo.toggle_box!
+    @saved = true # cannot determine error
+    respond_to do |format|
+      format.js
+      format.xml { render :xml => @todo.to_xml( *to_xml_params ) }
+      format.html { redirect_to request.referrer}
+      format.m {
+        if cookies[:mobile_url]
+          old_path = cookies[:mobile_url]
+          cookies[:mobile_url] = {:value => nil, :secure => SITE_CONFIG['secure_cookies']}
+          notify(:notice, "Star2 toggled")
+          redirect_to old_path
+        else
+          notify(:notice, "Star2 toggled")
           redirect_to todos_path(:format => 'm')
         end
       }
@@ -754,6 +803,38 @@ class TodosController < ApplicationController
       :include => included_tables,
       :conditions => ['todos.due > ?', due_this_month_date],
       :order => "due")
+
+    @count = current_user.todos.not_completed.are_due.count
+
+    respond_to do |format|
+      format.html
+      format.ics   {
+        @due_all = current_user.todos.not_completed.are_due.find(:all, :order => "due")
+        render :action => 'calendar', :layout => false, :content_type => Mime::ICS
+      }
+      format.xml {
+        @due_all = current_user.todos.not_completed.are_due.find(:all, :order => "due")
+        render :xml => @due_all.to_xml( *to_xml_params )
+      }
+    end
+  end
+
+  def modify
+    @source_view = params['_source_view'] || 'modify'
+    @page_title = "TRACKS::Modify Multiple" # <!-- Sage hardcoded; ToDo: fix -->
+
+    @projects = current_user.projects.find(:all)
+
+    included_tables = Todo::DEFAULT_INCLUDES
+
+    @flagged_not_completed = current_user.todos.not_completed.find(:all,
+                                                                   :include => included_tables,
+                                                                   :conditions => { :box_checked => "checked" })
+
+    @flagged_completed = current_user.todos.completed.find(:all,
+                                                           :include => included_tables,
+                                                           :conditions => { :box_checked => "checked" })
+
 
     @count = current_user.todos.not_completed.are_due.count
 

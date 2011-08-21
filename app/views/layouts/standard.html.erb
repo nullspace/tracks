@@ -95,6 +95,7 @@
             </ul>
           </li>
           <li><%= navigation_link(image_tag("system-search.png", :size => "16X16", :border => 0), {:controller => "search", :action => "index"}, :title => t('layouts.navigation.search')) %></li>
+          <li><%= navigation_link(t('layouts.navigation.modmult'), modify_path, :title => t('layouts.navigation.modmult_title')) %></li>
         </ul>
       </div>
       <%= render_flash %>

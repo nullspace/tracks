@@ -16,6 +16,8 @@ en:
       contexts: 2-Contexts
       home: 1-Home
     navigation:
+      modmult: "ModMult"
+      modmult_title: "Hacked menu for modifying multiple actions"
       manage_users_title: Add or delete users
       recurring_todos: Repeating todos
       api_docs: REST API Docs
