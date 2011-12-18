@@ -492,7 +492,7 @@ class TodosControllerTest < ActionController::TestCase
     recurring_todo_1 = RecurringTodo.find(1)
     set_user_to_current_time_zone(recurring_todo_1.user)
     todo_1 = Todo.find_by_recurring_todo_id(1)
-    today = Time.now.at_midnight
+    today = Time.zone.now.at_midnight
 
     # change recurrence pattern to monthly and set show_from to today
     recurring_todo_1.target = 'show_from_date'
@@ -530,7 +530,9 @@ class TodosControllerTest < ActionController::TestCase
     # check that the new_todo is in the tickler to show next month
     assert !new_todo.show_from.nil?
 
-    next_month = today + 1.month
+    # do not use today here. It somehow gets messed up with the timezone calculation.
+    next_month = (Time.zone.now + 1.month).at_midnight
+
     assert_equal next_month.utc.to_date.to_s(:db), new_todo.show_from.utc.to_date.to_s(:db)
   end
 
@@ -650,6 +652,7 @@ class TodosControllerTest < ActionController::TestCase
     get :tag, :name => "single"
     assert_equal true, assigns['single_tag'], "should recognize it is a single tag name"
     assert_equal "single", assigns['tag_expr'][0][0], "should store the single tag"
+    assert_equal "single", assigns['tag_name'], "should store the single tag name"
   end
 
   def test_get_boolean_expression_from_parameters_of_tag_view_multiple_tags
