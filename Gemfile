@@ -14,7 +14,8 @@ gem "aasm", "~>2.2.0"
 gem "rubyjedi-actionwebservice", :require => "actionwebservice"
 gem "rubycas-client", "~>2.2.1"
 gem "ruby-openid", :require => "openid"
-gem "sqlite3"
+ #gem "sqlite3"
+gem "fcgi"
 gem "mysql"
 gem 'bcrypt-ruby', '~> 2.1.4'
 gem 'htmlentities', '~> 4.3.0'
@@ -40,7 +41,7 @@ end
 group :test do
   gem "test-unit", "1.2.3"
   gem "flexmock"
-  gem "ZenTest", ">=4.0.0"
+  #gem "ZenTest", ">=4.0.0"
   gem "hpricot"
   gem "hoe"
   gem "rspec-rails", "~>1.3.3"
