@@ -23,8 +23,8 @@
           <div class="submit_modify_mult">
             <% @new_params = params %>
             <% @new_params[:execute] = true %>
-            <%= button_to "Modify tasks listed below", modify_path(@new_params),
-		:confirm => "The world may implode - are you sure you want to do this?" %>
+	    <%= button_to "Modify tasks listed below", modify_path(@new_params),
+               :confirm => "All tasks here will be affected - are you sure you want to do this?" %>
           </div>
         <% end %>
       <% end %>
