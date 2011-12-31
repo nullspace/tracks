@@ -814,6 +814,47 @@ class TodosController < ApplicationController
     end
   end
 
+  def undefer
+    @source_view = params['_source_view'] || 'todo'
+
+    @todo = current_user.todos.find(params[:id])
+    @original_item_context_id = @todo.context_id
+    @todo_deferred_state_changed = true
+    @new_context_created = false
+    @due_date_changed = false
+    @tag_was_removed = false
+    @todo_hidden_state_changed = false
+    @todo_was_deferred_from_active_state = @todo.show_from.nil? # TODO - unsure
+
+    @todo.show_from = nil # Set to nil to remove show_from
+    @saved = @todo.save
+
+    source_view do |page|
+      page.project {
+        @remaining_undone_in_project = current_user.projects.find(@todo.project_id).todos.not_completed.count
+        @original_item_project_id = @todo.project_id
+      }
+      page.tag {
+        determine_deferred_tag_count(params['_tag_name'])
+      }
+    end
+
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js {render :action => 'update'}
+      format.m {
+      notify(:notice, t("todos.action_deferred", :description => @todo.description))
+        if cookies[:mobile_url]
+          old_path = cookies[:mobile_url]
+          cookies[:mobile_url] = {:value => nil, :secure => SITE_CONFIG['secure_cookies']}
+          redirect_to old_path
+        else
+          redirect_to todos_path(:format => 'm')
+        end
+      }
+    end
+  end
+
   def calendar
     @source_view = params['_source_view'] || 'calendar'
     @page_title = t('todos.calendar_page_title')

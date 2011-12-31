@@ -49,6 +49,16 @@ module TodosHelper
     return link_to(image_tag_for_defer(days), url, options)
   end
 
+  def remote_undefer_menu_item(todo)
+    return link_to(
+      image_tag("blank.png", :align => "absmiddle")+" Undefer",
+      {:controller => 'todos', :action => 'undefer', :id => todo.id},
+      :method => :put,
+      :class => "undefer",
+      :id => "undefer_#{dom_id(todo)}", 
+      :title => "Undefer");
+  end
+
   def remote_delete_dependency(todo, predecessor)
     link_to(
       image_tag("blank.png", :title => t('todos.remove_dependency'), :align => "absmiddle", :class => "delete_item"),
