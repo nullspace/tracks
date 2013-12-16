@@ -1,4 +1,4 @@
-source :gemcutter
+source "http://rubygems.org"
 source "http://gems.github.com/"
 
 gem "rake", "~>0.8.7"
@@ -29,7 +29,7 @@ end
 
 group :development do
   if RUBY_VERSION.to_f >= 1.9
-    gem "ruby-debug19" 
+    gem "debugger" #ruby-debug19" 
     gem "mongrel", "1.2.0.pre2"
   else
     gem "ruby-debug"
