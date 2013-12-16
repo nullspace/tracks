@@ -1,11 +1,13 @@
 source 'https://rubygems.org'
 
 gem 'rails', '~>3.2'
+gem 'passenger'
 
 # you may comment out the database driver you will not be using.
 # This will prevent a native build of the driver. Building native drivers is not 
 # always possible on all hosters
 gem "sqlite3", "~>1.3"
+gem "mysql"
 gem "mysql2", "~>0.3"
 
 gem "RedCloth", "~>4.2.9"
@@ -37,6 +39,7 @@ gem 'jquery-rails', "~>2.1"
 # To use ActiveModel has_secure_password
 gem 'bcrypt-ruby', "~>3.0"
 
+  gem "tolk", "~>1.3"
 group :development do
   if RUBY_VERSION.to_f >= 1.9
     # gem "ruby-debug19", :require => 'ruby-debug'
@@ -44,7 +47,6 @@ group :development do
     gem "ruby-debug"
   end
   gem "yard", "~>0.8"
-  gem "tolk", "~>1.3"
   gem "bullet", "~>4.3"
 end
 
